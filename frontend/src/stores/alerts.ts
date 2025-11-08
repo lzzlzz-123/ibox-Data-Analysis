@@ -22,7 +22,7 @@ function dedupeAlerts(alerts: Alert[]): Alert[] {
     existing.set(alert.id, alert);
   });
   return Array.from(existing.values()).sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    (a, b) => new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime()
   );
 }
 
@@ -40,7 +40,7 @@ export const useAlertsStore = defineStore('alerts', {
       if (state.filter === 'all') {
         return state.alerts;
       }
-      return state.alerts.filter((alert) => alert.level === state.filter);
+      return state.alerts.filter((alert) => alert.severity === state.filter);
     },
     unreadCount(state): number {
       return state.alerts.filter((alert) => !alert.acknowledged).length;

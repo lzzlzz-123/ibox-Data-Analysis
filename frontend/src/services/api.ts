@@ -33,10 +33,13 @@ export interface CollectionEvent {
 export interface Alert {
   id: string;
   collectionId: string;
-  level: 'info' | 'warning' | 'critical';
-  title: string;
+  severity: 'info' | 'warning' | 'critical';
+  type: 'price_drop' | 'volume_spike' | 'listing_depletion' | string;
   message: string;
-  timestamp: string;
+  triggeredAt: string;
+  resolved?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
   acknowledged?: boolean;
 }
 
@@ -189,11 +192,12 @@ function sanitizeAlerts(alerts: Alert[]): Alert[] {
     })
     .map((alert) => ({
       ...alert,
-      level: alert.level ?? 'info',
+      severity: alert.severity ?? 'info',
+      type: alert.type ?? 'unknown',
       message: alert.message?.trim() || 'No message provided',
-      timestamp: alert.timestamp ?? new Date().toISOString(),
+      triggeredAt: alert.triggeredAt ?? new Date().toISOString(),
     }))
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    .sort((a, b) => new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime());
 }
 
 export async function fetchCollections(): Promise<CollectionsResponse> {

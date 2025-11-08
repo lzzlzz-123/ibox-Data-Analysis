@@ -14,10 +14,10 @@ const mockedFetchAlerts = fetchAlerts as unknown as vi.MockedFunction<typeof fet
 const baseAlert: Alert = {
   id: 'alert-1',
   collectionId: '1',
-  level: 'warning',
-  title: 'Volume Spike',
+  severity: 'warning',
+  type: 'volume_spike',
   message: 'Volume increased rapidly.',
-  timestamp: '2023-01-02T00:00:00Z',
+  triggeredAt: '2023-01-02T00:00:00Z',
   acknowledged: false,
 };
 
@@ -27,12 +27,12 @@ beforeEach(() => {
 });
 
 describe('Alerts Store', () => {
-  it('deduplicates alerts and sorts by timestamp', async () => {
+  it('deduplicates alerts and sorts by triggeredAt', async () => {
     mockedFetchAlerts.mockResolvedValue({
       alerts: [
         baseAlert,
         { ...baseAlert },
-        { ...baseAlert, id: 'alert-2', timestamp: '2023-01-03T00:00:00Z' },
+        { ...baseAlert, id: 'alert-2', triggeredAt: '2023-01-03T00:00:00Z' },
       ],
     });
 
@@ -55,8 +55,8 @@ describe('Alerts Store', () => {
 
     mockedFetchAlerts.mockResolvedValue({
       alerts: [
-        { ...baseAlert, id: 'alert-3', timestamp: '2023-01-04T00:00:00Z', acknowledged: false },
-        { ...baseAlert, id: 'alert-4', timestamp: '2023-01-05T00:00:00Z', acknowledged: false },
+        { ...baseAlert, id: 'alert-3', triggeredAt: '2023-01-04T00:00:00Z', acknowledged: false },
+        { ...baseAlert, id: 'alert-4', triggeredAt: '2023-01-05T00:00:00Z', acknowledged: false },
       ],
     });
 
