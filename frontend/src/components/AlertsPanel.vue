@@ -5,12 +5,12 @@
       <slot name="actions"></slot>
     </header>
     <ul v-if="alerts.length">
-      <li v-for="alert in alerts" :key="alert.id" :class="[`level-${alert.level}`]">
+      <li v-for="alert in alerts" :key="alert.id" :class="[`level-${alert.severity}`]">
         <div class="alert-header">
-          <span class="pill">{{ alert.level }}</span>
-          <span class="timestamp">{{ formatTimestamp(alert.timestamp) }}</span>
+          <span class="pill">{{ alert.severity }}</span>
+          <span class="timestamp">{{ formatTimestamp(alert.triggeredAt) }}</span>
         </div>
-        <h3>{{ alert.title }}</h3>
+        <h3>{{ formatAlertType(alert.type) }}</h3>
         <p>{{ alert.message }}</p>
       </li>
     </ul>
@@ -40,6 +40,13 @@ function formatTimestamp(timestamp: string) {
     return 'Unknown time';
   }
   return date.toLocaleString();
+}
+
+function formatAlertType(type: string) {
+  return type
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
 </script>
 
