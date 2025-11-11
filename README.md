@@ -182,21 +182,35 @@ Event Timeline:
 
 ## API Endpoints
 
+The API provides comprehensive endpoints for collections, alerts, and analytics. For detailed documentation including request/response schemas, pagination, filtering, and examples, see [docs/api.md](docs/api.md).
+
 ### Collections
 
-- `GET /api/collections` — Get collection summaries and global metrics
-- `GET /api/collections/:id` — Get detailed collection data with charts
+- `GET /api/collections` — Get all collections with latest metrics and 24h deltas
+- `GET /api/collections/:id` — Get collection metadata and analytics summary
+- `GET /api/collections/:id/snapshots` — Get time-series snapshot data with filtering and pagination
+- `GET /api/collections/:id/events` — Get recent listing/purchase events with pagination
 
 ### Alerts
 
-- `GET /api/alerts` — Get all alerts (supports filtering)
-- `GET /api/alerts?collectionId=col-1` — Get alerts for a collection
-- `GET /api/alerts?resolved=false` — Get unresolved alerts
-- `GET /api/alerts?severity=critical` — Get alerts by severity
-- `GET /api/alerts?type=price_drop` — Get alerts by type
+- `GET /api/alerts` — Get alerts with filtering, sorting, and pagination
 - `GET /api/alerts/:id` — Get alert details
-- `PUT /api/alerts/:id` — Update alert (e.g., mark as resolved)
+- `PUT /api/alerts/:id` — Update alert properties
 - `PUT /api/alerts/:id/resolve` — Mark alert as resolved
+
+### Analytics
+
+- `GET /api/analytics/metrics` — Retrieve analytics metrics with filters
+- `POST /api/analytics/refresh` — Refresh metrics for collections
+- `GET /api/analytics/health/status` — Check analytics service health
+
+### Key Features
+
+- **Request Validation**: All endpoints validate input parameters with detailed error messages
+- **Pagination**: List endpoints support consistent pagination with metadata
+- **Filtering**: Advanced filtering options for alerts and collection data
+- **CORS Support**: Configured for frontend development and production
+- **Error Handling**: Comprehensive error responses with appropriate HTTP status codes
 
 ## Development
 
