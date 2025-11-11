@@ -44,6 +44,7 @@ Frontend runs at `http://localhost:5173`
 ```bash
 cd backend
 npm install
+npm run migrate   # apply MySQL schema (requires MySQL running locally)
 npm run dev
 ```
 
@@ -81,6 +82,8 @@ Key Features:
 - Retry logic with exponential backoff for webhooks
 - Structured logging for debugging
 - Flexible notifier architecture
+
+The database schema and migration workflow are documented in [docs/db-schema.md](docs/db-schema.md).
 
 ## Alert System
 

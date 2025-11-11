@@ -37,6 +37,14 @@ const env = {
   cleanupWarningThreshold: toInt(process.env.CLEANUP_WARNING_THRESHOLD, 1000),
   enableCleanupCron: toBoolean(process.env.ENABLE_CLEANUP_CRON, false),
   enableHourlyCron: toBoolean(process.env.ENABLE_CRON, false),
+  db: {
+    host: process.env.DB_HOST || 'localhost',
+    port: toInt(process.env.DB_PORT, 3306),
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'collections_dashboard',
+    connectionLimit: toInt(process.env.DB_CONNECTION_LIMIT, 10),
+  },
 };
 
 module.exports = env;
