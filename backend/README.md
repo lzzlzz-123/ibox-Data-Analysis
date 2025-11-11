@@ -146,6 +146,109 @@ npm run cleanup:once
 
 Logs will include a summary of rows removed per table and the total duration for the run.
 
+## Data Ingestion
+
+The backend provides an ingestion workflow for importing crawler data (snapshots, listing events, purchase events) into the system. Data is normalized, deduplicated via idempotent operations, and analytics are refreshed automatically.
+
+### Ingestion Configuration
+
+- `ENABLE_CRON` — When set to `true`, the hourly refresh job runs automatically at the top of each hour (default: `false`).
+- `ADMIN_API_KEY` — API key required for on-demand manual refresh requests (must be set to enable admin endpoints).
+
+Example:
+```env
+ENABLE_CRON=true
+ADMIN_API_KEY=your-secret-admin-key-here
+```
+
+### Manual Data Refresh (On-Demand)
+
+Trigger an immediate crawl and ingestion cycle with:
+
+```bash
+curl -X POST http://localhost:3000/api/admin/refresh \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "apiKey": "your-secret-admin-key-here",
+    "crawlerData": [
+      {
+        "collectionId": "collection-1",
+        "metadata": {
+          "name": "Collection Name",
+          "floor_price": 100
+        },
+        "snapshot": {
+          "id": "snap-1",
+          "price": 100.50,
+          "volume": 1000
+        },
+        "listingEvents": [
+          {
+            "id": "list-1",
+            "price": 105.00,
+            "quantity": 5
+          }
+        ],
+        "purchaseEvents": [
+          {
+            "id": "purch-1",
+            "price": 102.00,
+            "quantity": 1
+          }
+        ]
+      }
+    ]
+  }'
+```
+
+Response includes a summary:
+```json
+{
+  "success": true,
+  "summary": {
+    "totalCollections": 1,
+    "totalSnapshots": 1,
+    "totalListingEvents": 1,
+    "totalPurchaseEvents": 1,
+    "failureCount": 0,
+    "durationMs": 45
+  }
+}
+```
+
+### Automatic Hourly Refresh
+
+When `ENABLE_CRON=true`, the system runs an automated refresh job hourly (at the top of each hour):
+
+```env
+ENABLE_CRON=true
+```
+
+The job:
+- Executes at cron expression `0 * * * *` (every hour at minute 0)
+- Logs start/completion and any failures
+- Refreshes analytics metrics
+- Handles errors gracefully without stopping the server
+
+### Idempotency
+
+The ingestion system ensures data consistency through idempotent operations:
+
+- Snapshots with duplicate IDs are not duplicated in storage
+- Listing and purchase events with duplicate IDs are treated as updates
+- Rerunning ingestion with unchanged data does not create duplicate rows
+- Collection metadata is upserted (updated or inserted)
+
+### Repository Layer
+
+The backend uses repository modules for data access:
+
+- **collectionRepository**: Manages collection metadata (upsert, retrieval)
+- **snapshotRepository**: Handles market snapshot operations (insert, delete by age)
+- **eventRepository**: Manages listing and purchase events (insert, retrieval, deletion)
+
+All repository operations maintain transaction semantics and handle rollback on failure.
+
 ## API Endpoints
 
 ### Get All Alerts

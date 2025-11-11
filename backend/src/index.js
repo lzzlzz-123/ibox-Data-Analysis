@@ -4,8 +4,10 @@ const env = require('./config/env');
 const alertsRoutes = require('./routes/alerts');
 const analyticsRoutes = require('./routes/analytics');
 const collectionsRoutes = require('./routes/collections');
+const adminRoutes = require('./routes/admin');
 const logger = require('./utils/logger');
 const { scheduleCleanup } = require('./jobs/cleanupJob');
+const { scheduleHourlyRefresh } = require('./jobs/hourlyRefresh');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,6 +47,7 @@ app.use((req, res, next) => {
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/collections', collectionsRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
@@ -100,5 +103,11 @@ app.listen(PORT, () => {
     scheduleCleanup();
   } else {
     logger.info('Cleanup cron disabled. Set ENABLE_CLEANUP_CRON=true to enable.');
+  }
+
+  if (env.enableHourlyCron) {
+    scheduleHourlyRefresh();
+  } else {
+    logger.info('Hourly refresh cron disabled. Set ENABLE_CRON=true to enable.');
   }
 });

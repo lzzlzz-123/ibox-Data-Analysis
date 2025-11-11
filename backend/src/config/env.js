@@ -36,6 +36,7 @@ const env = {
   cleanupBatchSize: toInt(process.env.CLEANUP_BATCH_SIZE, 500),
   cleanupWarningThreshold: toInt(process.env.CLEANUP_WARNING_THRESHOLD, 1000),
   enableCleanupCron: toBoolean(process.env.ENABLE_CLEANUP_CRON, false),
+  enableHourlyCron: toBoolean(process.env.ENABLE_CRON, false),
 };
 
 module.exports = env;
