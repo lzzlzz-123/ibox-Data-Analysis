@@ -30,6 +30,19 @@ The API runs at [http://localhost:3000](http://localhost:3000) by default.
 npm start
 ```
 
+## Database & Migrations
+
+The backend uses MySQL 8+ for persistence. Before running the API locally or in CI environments:
+
+1. Start a MySQL instance accessible to the backend (default: `127.0.0.1:3306`).
+2. Copy `.env.example` to `.env` and configure the database variables (`DB_HOST`, `DB_USER`, etc.).
+3. Apply migrations with:
+   ```bash
+   npm run migrate
+   ```
+
+Migrations are stored as SQL files under `backend/db/migrations` and are applied sequentially. Each run records the applied filename in the `schema_migrations` ledger so the command is idempotent. See [docs/db-schema.md](../docs/db-schema.md) for a detailed description of tables, indexes, and retention strategy.
+
 ### Testing
 
 ```bash
@@ -45,6 +58,15 @@ npm run test:watch
 ## Environment Variables
 
 Copy `.env.example` to `.env` and configure the following:
+
+### Database Configuration
+
+- `DB_HOST` — MySQL host (default: `localhost`)
+- `DB_PORT` — MySQL port (default: `3306`)
+- `DB_USER` — Database username (default: `root`)
+- `DB_PASSWORD` — Database password
+- `DB_NAME` — Database/schema name (default: `collections_dashboard`)
+- `DB_CONNECTION_LIMIT` — Connection pool size for the backend (default: `10`)
 
 ### Server Configuration
 
