@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const env = require('./config/env');
 const alertsRoutes = require('./routes/alerts');
 const analyticsRoutes = require('./routes/analytics');
 const collectionsRoutes = require('./routes/collections');
 const logger = require('./utils/logger');
+const { scheduleCleanup } = require('./jobs/cleanupJob');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -94,4 +95,10 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
+
+  if (env.enableCleanupCron) {
+    scheduleCleanup();
+  } else {
+    logger.info('Cleanup cron disabled. Set ENABLE_CLEANUP_CRON=true to enable.');
+  }
 });

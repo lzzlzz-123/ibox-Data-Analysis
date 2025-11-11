@@ -3,6 +3,29 @@ const logger = require('../utils/logger');
 const analyticsMetrics = [];
 let metricsId = 0;
 
+const DEFAULT_BATCH_SIZE = 500;
+
+function resolveCutoffTime(cutoffDate) {
+  if (cutoffDate instanceof Date) {
+    return cutoffDate.getTime();
+  }
+
+  if (typeof cutoffDate === 'number') {
+    return cutoffDate;
+  }
+
+  const parsed = new Date(cutoffDate).getTime();
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function normalizeLimit(limit) {
+  const parsed = parseInt(limit, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return DEFAULT_BATCH_SIZE;
+  }
+  return parsed;
+}
+
 const TIME_WINDOWS = {
   '1h': 1 * 60 * 60 * 1000,
   '6h': 6 * 60 * 60 * 1000,
@@ -123,6 +146,38 @@ const analyticsRepository = {
 
   async getWindowDuration(window) {
     return TIME_WINDOWS[window] || null;
+  },
+
+  async deleteOlderThan(cutoffDate, limit) {
+    try {
+      const cutoffTime = resolveCutoffTime(cutoffDate);
+      if (!Number.isFinite(cutoffTime)) {
+        return 0;
+      }
+
+      const batchLimit = normalizeLimit(limit);
+      let deleted = 0;
+
+      for (let i = analyticsMetrics.length - 1; i >= 0; i -= 1) {
+        if (deleted >= batchLimit) {
+          break;
+        }
+
+        const timestamp = new Date(analyticsMetrics[i].timestamp).getTime();
+        if (Number.isFinite(timestamp) && timestamp < cutoffTime) {
+          analyticsMetrics.splice(i, 1);
+          deleted += 1;
+        }
+      }
+
+      return deleted;
+    } catch (error) {
+      logger.error('Error deleting old analytics metrics', {
+        cutoffDate,
+        error: error.message,
+      });
+      throw error;
+    }
   },
 
   async clear() {
