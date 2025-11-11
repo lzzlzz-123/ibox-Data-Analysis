@@ -1,0 +1,14 @@
+{
+  "id": "ibox-sample-001",
+  "name": "iBox Digital Collectibles",
+  "title": "iBox Digital Collectibles Series 1",
+  "description": "A premium collection of digital art pieces from renowned artists",
+  "imageUrl": "https://example.com/images/ibox-collection.jpg",
+  "externalUrl": "https://ibox.example.com/collections/001",
+  "totalSupply": 10000,
+  "floorPrice": 0.5,
+  "volume24h": 1250.75,
+  "marketCap": 5000000,
+  "holdersCount": 3250,
+  "createdAt": "2024-01-15T10:00:00Z"
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "purchase-001",
+    "purchaseId": "pur_001",
+    "txHash": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+    "tokenId": "token_004",
+    "buyer": "0x4567890123456789012345678901234567890123",
+    "seller": "0x5678901234567890123456789012345678901234",
+    "price": 0.65,
+    "marketplace": "iBox",
+    "timestamp": "2024-01-20T14:15:00Z"
+  },
+  {
+    "id": "purchase-002",
+    "purchaseId": "pur_002",
+    "txHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    "tokenId": "token_005",
+    "buyer": "0x6789012345678901234567890123456789012345",
+    "seller": "0x7890123456789012345678901234567890123456",
+    "price": 0.9,
+    "marketplace": "iBox",
+    "timestamp": "2024-01-20T14:10:00Z"
+  },
+  {
+    "id": "purchase-001",
+    "purchaseId": "pur_001",
+    "txHash": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+    "tokenId": "token_004",
+    "buyer": "0x4567890123456789012345678901234567890123",
+    "seller": "0x5678901234567890123456789012345678901234",
+    "price": 0.65,
+    "marketplace": "iBox",
+    "timestamp": "2024-01-20T14:15:00Z"
+  }
+]

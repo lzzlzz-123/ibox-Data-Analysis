@@ -1,0 +1,38 @@
+[
+  {
+    "id": "listing-001",
+    "listingId": "lst_001",
+    "tokenId": "token_001",
+    "seller": "0x1234567890123456789012345678901234567890",
+    "price": 0.75,
+    "marketplace": "iBox",
+    "timestamp": "2024-01-20T14:30:00Z"
+  },
+  {
+    "id": "listing-002",
+    "listingId": "lst_002",
+    "tokenId": "token_002",
+    "seller": "0x2345678901234567890123456789012345678901",
+    "price": 0.6,
+    "marketplace": "iBox",
+    "timestamp": "2024-01-20T14:25:00Z"
+  },
+  {
+    "id": "listing-003",
+    "listingId": "lst_003",
+    "tokenId": "token_003",
+    "seller": "0x3456789012345678901234567890123456789012",
+    "price": 0.8,
+    "marketplace": "iBox",
+    "timestamp": "2024-01-20T14:20:00Z"
+  },
+  {
+    "id": "listing-001",
+    "listingId": "lst_001",
+    "tokenId": "token_001",
+    "seller": "0x1234567890123456789012345678901234567890",
+    "price": 0.75,
+    "marketplace": "iBox",
+    "timestamp": "2024-01-20T14:30:00Z"
+  }
+]
