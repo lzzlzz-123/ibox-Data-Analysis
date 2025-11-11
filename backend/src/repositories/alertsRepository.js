@@ -9,7 +9,7 @@ const alertsRepository = {
       const alert = {
         id: String(++alertId),
         ...alertData,
-        resolved: false,
+        resolved: alertData.resolved !== undefined ? alertData.resolved : false,
         createdAt: new Date().toISOString(),
       };
 
