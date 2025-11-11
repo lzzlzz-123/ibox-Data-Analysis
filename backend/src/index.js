@@ -1,6 +1,8 @@
 const express = require('express');
 require('dotenv').config();
 const alertsRoutes = require('./routes/alerts');
+const analyticsRoutes = require('./routes/analytics');
+const collectionsRoutes = require('./routes/collections');
 const logger = require('./utils/logger');
 
 const app = express();
@@ -14,6 +16,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/alerts', alertsRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/collections', collectionsRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
