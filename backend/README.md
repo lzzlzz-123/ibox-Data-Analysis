@@ -77,6 +77,15 @@ Example:
 ALERT_COOLDOWN_MINUTES=120
 ```
 
+### Cleanup Configuration
+
+These settings control the retention policy and execution of the automated cleanup job:
+
+- `DATA_RETENTION_HOURS` — Number of hours of data to retain (default: `72`). Entries older than the cutoff are removed from market snapshots, listing events, purchase events, and analytics metrics.
+- `ENABLE_CLEANUP_CRON` — When set to `true`, schedules the cleanup job to run hourly at minute 10 (default: `false`).
+- `CLEANUP_BATCH_SIZE` — Maximum number of records removed per batch when pruning old data (default: `500`).
+- `CLEANUP_WARNING_THRESHOLD` — Emits a warning when deletions for a single table exceed this count in one run (default: `1000`).
+
 ### Webhook Notifier Configuration
 
 To enable webhook notifications (e.g., to Slack, Feishu, Discord):
@@ -115,6 +124,27 @@ EMAIL_ENABLED=true
 EMAIL_TO=alerts@example.com
 EMAIL_FROM=noreply@dashboard.example.com
 ```
+
+## Data Retention & Cleanup
+
+The backend keeps recent market activity while routinely pruning data older than the configured retention window. Records older than `DATA_RETENTION_HOURS` are deleted from market snapshots, listing events, purchase events, and analytics metrics, while collection metadata and recent alert activity are preserved.
+
+### Scheduling the Cleanup Job
+
+- Leave `ENABLE_CLEANUP_CRON=false` (default) to disable scheduled cleanup.
+- Set `ENABLE_CLEANUP_CRON=true` to schedule the cleanup job hourly at minute 10.
+- Batches are limited by `CLEANUP_BATCH_SIZE` to avoid long-running locks.
+- When the number of deleted rows for a table exceeds `CLEANUP_WARNING_THRESHOLD`, a warning is emitted to the log so you can investigate spikes in data churn.
+
+### Running Cleanup Manually
+
+Use the following command to execute the cleanup once (helpful for local testing):
+
+```bash
+npm run cleanup:once
+```
+
+Logs will include a summary of rows removed per table and the total duration for the run.
 
 ## API Endpoints
 
@@ -347,25 +377,34 @@ Expected response:
 ```
 backend/
 ├── src/
-│   ├── index.js                         # Express server entry point
+│   ├── config/
+│   │   └── env.js                     # Environment variable defaults and parsing
+│   ├── jobs/
+│   │   ├── cleanupJob.js              # Data retention job implementation
+│   │   └── runCleanupOnce.js          # CLI entrypoint for manual cleanup
+│   ├── index.js                       # Express server entry point
 │   ├── routes/
-│   │   └── alerts.js                    # Alert API routes
+│   │   └── alerts.js                  # Alert API routes
 │   ├── services/
-│   │   └── alertService.js              # Alert evaluation logic
+│   │   └── alertService.js            # Alert evaluation logic
 │   ├── notifications/
-│   │   ├── webhookNotifier.js           # Webhook notification sender
-│   │   └── emailNotifier.js             # Email notification sender
+│   │   ├── webhookNotifier.js         # Webhook notification sender
+│   │   └── emailNotifier.js           # Email notification sender
 │   ├── repositories/
-│   │   └── alertsRepository.js          # Alert data access layer
+│   │   ├── analyticsRepository.js     # Analytics metrics store
+│   │   ├── dataStore.js               # In-memory data storage
+│   │   └── alertsRepository.js        # Alert data access layer
 │   └── utils/
-│       └── logger.js                    # Logging utility
+│       └── logger.js                  # Logging utility
 ├── tests/
-│   ├── alertService.spec.js             # Alert service tests
-│   └── webhookNotifier.spec.js          # Webhook notifier tests
+│   ├── alertService.spec.js           # Alert service tests
+│   ├── analyticsService.spec.js       # Analytics computation tests
+│   ├── cleanupJob.spec.js             # Data cleanup job tests
+│   └── ...                            # Additional API and repository tests
 ├── package.json
-├── jest.config.js                        # Jest configuration
-├── .env.example                          # Example environment variables
-└── README.md                             # This file
+├── jest.config.js                     # Jest configuration
+├── .env.example                       # Example environment variables
+└── README.md                          # This file
 ```
 
 ### Adding Custom Alert Types

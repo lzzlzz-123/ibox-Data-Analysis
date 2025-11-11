@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
+    "cleanup:once": "node src/jobs/runCleanupOnce.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
