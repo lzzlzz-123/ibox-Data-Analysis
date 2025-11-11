@@ -457,6 +457,151 @@ Expected response:
 }
 ```
 
+## Crawler Module
+
+The crawler module provides a flexible system for fetching collection data from external sources like iBox and other NFT marketplaces.
+
+### Running the Crawler
+
+Execute the crawler once with default configuration:
+
+```bash
+npm run crawl:once
+```
+
+Run with specific collections:
+
+```bash
+npm run crawl:once -- --collections collection1,collection2
+```
+
+Get verbose output:
+
+```bash
+npm run crawl:once -- --verbose --output full
+```
+
+### Crawler Configuration
+
+Configure crawler behavior using environment variables:
+
+```env
+# Base URL for API endpoints
+CRAWLER_BASE_URL=https://api.example.com
+
+# Custom targets configuration (JSON string)
+CRAWLER_TARGETS=[{"id":"custom","name":"Custom Collection","enabled":true,...}]
+
+# Rate limiting
+CRAWLER_DELAY_MS=500
+CRAWLER_REQUESTS_PER_SECOND=2
+
+# Request settings
+CRAWLER_TIMEOUT_MS=30000
+CRAWLER_RETRIES=3
+CRAWLER_CONCURRENCY=3
+```
+
+### Crawler Targets
+
+The crawler is configured with targets in `src/crawler/targets.js`. Each target specifies:
+
+- Collection identifiers and metadata
+- Base URLs and endpoints
+- Rate limiting settings
+- HTTP headers and selectors
+
+Example target configuration:
+
+```javascript
+{
+  id: 'ibox-sample',
+  name: 'iBox Sample Collection',
+  enabled: true,
+  baseUrl: 'https://api.example.com',
+  rateLimit: {
+    requestsPerSecond: 2,
+    delayBetweenRequests: 500
+  },
+  endpoints: {
+    collection: '/collection/{collectionId}',
+    listings: '/collection/{collectionId}/listings',
+    purchases: '/collection/{collectionId}/purchases',
+    snapshot: '/collection/{collectionId}/snapshot'
+  }
+}
+```
+
+### Crawler Output
+
+The crawler produces normalized data structures ready for ingestion:
+
+- **Collection Metadata**: Basic collection information
+- **Listing Events**: New marketplace listings
+- **Purchase Events**: Completed sales transactions  
+- **Collection Snapshots**: Current market state metrics
+
+### Testing the Crawler
+
+Run parser tests with fixtures:
+
+```bash
+npm test -- src/crawler/__tests__/parsers.test.js
+```
+
+The tests use offline fixtures in `src/crawler/__fixtures__/` to verify parsing and deduplication logic without network dependencies.
+
+### Docker Considerations
+
+When running in Docker, ensure the container has:
+
+- Network access to external APIs
+- Sufficient memory for Puppeteer (if using browser automation)
+- Proper DNS configuration for API endpoints
+
+Install Chromium dependencies for headless browser operations:
+
+```dockerfile
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    fonts-liberation \
+    libapparmor1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libc6 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libexpat1 \
+    libfontconfig1 \
+    libgbm1 \
+    libgcc1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libstdc++6 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+    lsb-release \
+    wget \
+    xdg-utils
+```
+
 ## Alert Data Model
 
 ```javascript

@@ -7,6 +7,7 @@
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
     "cleanup:once": "node src/jobs/runCleanupOnce.js",
+    "crawl:once": "node src/scripts/runCrawlerOnce.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -18,6 +19,7 @@
     "express": "^4.18.2",
     "joi": "^18.0.1",
     "node-cron": "^3.0.2",
+    "p-limit": "^4.0.0",
     "supertest": "^7.1.4"
   },
   "devDependencies": {
