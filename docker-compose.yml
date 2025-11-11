@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # MySQL 8 Database
+  mysql:
+    image: mysql:8.0
+    container_name: collections-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: collections_dashboard
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/db/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - collections-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Backend API Service
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: collections-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=app_user
+      - DB_PASSWORD=app_password
+      - DB_NAME=collections_dashboard
+      - DB_CONNECTION_LIMIT=10
+      - DEBUG=false
+      - ALERT_PRICE_DROP_PERCENT=10
+      - ALERT_VOLUME_SPIKE_PERCENT=50
+      - ALERT_LISTING_DEPLETION_PERCENT=30
+      - ALERT_COOLDOWN_MINUTES=60
+      - DATA_RETENTION_HOURS=72
+      - ENABLE_CLEANUP_CRON=false
+      - CLEANUP_BATCH_SIZE=500
+      - CLEANUP_WARNING_THRESHOLD=1000
+      - ENABLE_CRON=false
+      - WEBHOOK_URL=
+      - WEBHOOK_MAX_RETRIES=3
+      - WEBHOOK_BACKOFF_MS=1000
+      - EMAIL_ENABLED=false
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - collections-network
+    volumes:
+      - ./backend/.env:/app/.env:ro
+
+  # Frontend Dashboard
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: collections-frontend
+    restart: unless-stopped
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3000
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - collections-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  collections-network:
+    driver: bridge
