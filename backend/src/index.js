@@ -49,6 +49,10 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/collections', collectionsRoutes);
 app.use('/api/admin', adminRoutes);
 
+app.get('/health/status', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
