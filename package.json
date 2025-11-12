@@ -1,0 +1,13 @@
+{
+  "name": "collections-dashboard",
+  "version": "1.0.0",
+  "description": "Full-stack collections dashboard with backend API and frontend UI",
+  "private": true,
+  "engines": {
+    "npm": ">=8.0.0"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}
