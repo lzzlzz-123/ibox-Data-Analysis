@@ -1,15 +1,16 @@
-FROM node:18-alpine as builder
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
-COPY frontend/package*.json ./
+COPY package.json ./
 
-# Install dependencies
-RUN npm ci
+# Install all dependencies (will generate fresh package-lock.json)
+RUN npm install
 
-# Copy source code
-COPY frontend/ ./
+# Copy source code (explicitly to avoid overwriting node_modules)
+COPY src ./src
+COPY index.html tsconfig.json tsconfig.node.json vite.config.ts ./
 
 # Build the application
 RUN npm run build
