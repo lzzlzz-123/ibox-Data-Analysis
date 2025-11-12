@@ -26,8 +26,8 @@ services:
   # Backend API Service
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: collections-backend
     restart: unless-stopped
     environment:
@@ -66,8 +66,8 @@ services:
   # Frontend Dashboard
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: collections-frontend
     restart: unless-stopped
     environment:

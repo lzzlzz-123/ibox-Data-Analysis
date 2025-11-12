@@ -3,13 +3,13 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files
-COPY backend/package*.json ./
+COPY package*.json ./
 
 # Clean install dependencies
 RUN rm -f package-lock.json && npm install
 
 # Copy source code
-COPY backend/src ./src
+COPY src ./src
 
 # Expose port
 EXPOSE 3000
